@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OTT Admin Dashboard 🚀</title>
+    <style>
+        body {
+            background-color: #141414;
+            color: #fff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #e50914;
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        hr {
+            border: 1px solid #333;
+            margin: 30px 0;
+        }
+
+        h2 {
+            color: #e50914;
+            margin-bottom: 15px;
+            border-left: 4px solid #e50914;
+            padding-left: 10px;
+        }
+
+        p {
+            color: #ccc;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .stat-box {
+            background-color: #181818;
+            padding: 20px;
+            border-radius: 10px;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+            margin: 10px;
+        }
+
+        .stat-box h3 {
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .stat-box p {
+            font-size: 1.8rem;
+            color: #e50914;
+            margin: 0;
+        }
+
+        .user-card, .movie-card {
+            background-color: #181818;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.6);
+        }
+
+        .user-card a, .movie-card a {
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .user-card a:hover, .movie-card a:hover {
+            opacity: 0.8;
+        }
+
+        .delete-link {
+            color: #e50914;
+        }
+
+        .edit-link {
+            color: #f5c518;
+        }
+
+        img {
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .history-entry {
+            background-color: #181818;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+
+        .history-entry b {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+
+    <hr>
+
+    <h2>Basic Stats</h2>
+    <div class="stats">
+        <div class="stat-box">
+            <h3>Total Users</h3>
+            <p>{{ total_users }}</p>
+        </div>
+        <div class="stat-box">
+            <h3>Total Movies</h3>
+            <p>{{ total_movies }}</p>
+        </div>
+        <div class="stat-box">
+            <h3>Total Views</h3>
+            <p>{{ total_views }}</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2>Manage Users</h2>
+    {% for user in users %}
+    <div class="user-card">
+        <p><b>Username:</b> {{ user.username }}<br>
+        <b>Joined:</b> {{ user.date_joined }}</p>
+
+        {% if not user.is_superuser %}
+        <a href="/delete-user/{{ user.id }}/" class="delete-link">Delete User</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <hr>
+
+    <h2>Manage Content</h2>
+    {% for movie in movies %}
+    <div class="movie-card">
+        <h3>{{ movie.title }}</h3>
+        <img src="{{ movie.thumbnail.url }}" width="200" alt="{{ movie.title }}">
+        <br><br>
+        <a href="/edit/{{ movie.id }}/" class="edit-link">Edit</a>
+        <br><br>
+        <a href="/delete/{{ movie.id }}/" class="delete-link">Delete</a>
+    </div>
+    {% endfor %}
+
+    <hr>
+
+    <h2>Recent Watch Activity</h2>
+    {% for history in histories %}
+    <div class="history-entry">
+        <b>{{ history.user.username }}</b> watched <b>{{ history.movie.title }}</b> at {{ history.watched_at }}
+    </div>
+    {% endfor %}
+</body>
+</html>

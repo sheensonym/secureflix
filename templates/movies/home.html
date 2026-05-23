@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureFlix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --red: #E50914;
+            --red-dark: #b20710;
+            --bg: #141414;
+            --surface: #1f1f1f;
+            --surface2: #2a2a2a;
+            --text: #e5e5e5;
+            --muted: #a3a3a3;
+            --card-w: 220px;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 48px;
+            background: linear-gradient(to bottom, rgba(0,0,0,.85) 0%, transparent 100%);
+            transition: background .3s;
+        }
+        nav.scrolled { background: #000; }
+
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.2rem;
+            letter-spacing: 3px;
+            color: var(--red);
+            text-decoration: none;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-user {
+            font-size: .85rem;
+            color: var(--muted);
+        }
+        .nav-user span { color: #fff; font-weight: 600; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 22px;
+            border-radius: 4px;
+            font-size: .88rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: opacity .2s, transform .15s;
+        }
+        .btn:hover { opacity: .85; transform: scale(1.02); }
+
+        .btn-primary { background: #fff; color: #000; }
+        .btn-secondary { background: rgba(109,109,110,.7); color: #fff; }
+        .btn-red { background: var(--red); color: #fff; }
+        .btn-outline {
+            background: transparent;
+            color: #fff;
+            border: 1.5px solid rgba(255,255,255,.6);
+            padding: 7px 18px;
+        }
+        .btn-logout {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid rgba(255,255,255,.2);
+            font-size: .8rem;
+            padding: 7px 14px;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            position: relative;
+            height: 85vh;
+            min-height: 520px;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 48px 80px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0d0d1a 100%);
+        }
+
+        .hero-bg-pattern {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 80% at 70% 40%, rgba(229,9,20,.08) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 60% at 30% 60%, rgba(100,50,200,.06) 0%, transparent 50%);
+        }
+
+        /* Hero shows first movie's thumbnail if available via Django */
+        .hero-movie-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center top;
+            filter: brightness(.45);
+        }
+
+        .hero-fade {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to right,
+                rgba(20,20,20,.95) 0%,
+                rgba(20,20,20,.5) 50%,
+                transparent 100%
+            ),
+            linear-gradient(
+                to top,
+                rgba(20,20,20,1) 0%,
+                transparent 40%
+            );
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 520px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--red);
+            margin-bottom: 12px;
+        }
+        .hero-badge::before {
+            content: '';
+            display: block;
+            width: 28px; height: 2px;
+            background: var(--red);
+        }
+
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3.5rem, 7vw, 5.5rem);
+            line-height: .95;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            text-shadow: 2px 4px 20px rgba(0,0,0,.8);
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            font-size: .82rem;
+            color: var(--muted);
+        }
+        .hero-rating {
+            background: var(--red);
+            color: #fff;
+            padding: 2px 7px;
+            border-radius: 3px;
+            font-weight: 700;
+            font-size: .75rem;
+        }
+
+        .hero-desc {
+            font-size: .95rem;
+            line-height: 1.65;
+            color: #ccc;
+            margin-bottom: 28px;
+            max-width: 420px;
+        }
+
+        .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        /* ── SECTIONS ── */
+        .sections { padding: 0 48px 80px; margin-top: -60px; position: relative; z-index: 10; }
+
+        .section { margin-bottom: 48px; }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: .3px;
+            margin-bottom: 18px;
+            color: #e5e5e5;
+        }
+        .section-title .count {
+            font-size: .8rem;
+            color: var(--muted);
+            font-weight: 400;
+            margin-left: 10px;
+        }
+
+        /* ── CARD ROW ── */
+        .card-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
+            gap: 10px;
+        }
+
+        .card {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            background: var(--surface);
+            transition: transform .3s cubic-bezier(.25,.46,.45,.94), z-index 0s .3s;
+        }
+        .card:hover {
+            transform: scale(1.06);
+            z-index: 10;
+            transition: transform .3s cubic-bezier(.25,.46,.45,.94), z-index 0s 0s;
+            box-shadow: 0 20px 60px rgba(0,0,0,.8);
+        }
+
+        .card-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* video preview on hover */
+        .card video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity .4s .2s;
+            z-index: 1;
+        }
+        .card:hover video { opacity: 1; }
+
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,.9) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity .3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 14px;
+            z-index: 10;
+        }
+        .card:hover .card-overlay { opacity: 1; }
+
+        .card-title {
+            font-size: .88rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 6px;
+        }
+
+        .card-actions { display: flex; gap: 8px; align-items: center; }
+
+        .icon-btn {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,.6);
+            background: rgba(0,0,0,.4);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: .75rem;
+            transition: background .2s, border-color .2s;
+            text-decoration: none;
+            color: #fff;
+        }
+        .icon-btn:hover { background: rgba(255,255,255,.2); border-color: #fff; }
+        .icon-btn.play { background: #fff; border-color: #fff; color: #000; font-size: .9rem; }
+
+        .card-badge {
+            position: absolute;
+            top: 8px; left: 8px;
+            background: var(--red);
+            color: #fff;
+            font-size: .65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 2px 7px;
+            border-radius: 3px;
+        }
+
+        /* superuser admin controls */
+        .card-admin {
+            position: absolute;
+            top: 8px; right: 8px;
+            display: flex; gap: 5px;
+            opacity: 0;
+            transition: opacity .2s;
+            z-index: 20;
+            pointer-events: none;
+        }
+        .card:hover .card-admin {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .card-admin a { pointer-events: auto; }
+
+        .admin-btn {
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: .7rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+        }
+        .admin-btn.edit { background: rgba(255,255,255,.85); color: #000; }
+        .admin-btn.del  { background: rgba(229,9,20,.85); color: #fff; }
+
+        /* ── EMPTY STATE ── */
+        .empty {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--muted);
+        }
+        .empty-icon { font-size: 3.5rem; margin-bottom: 16px; }
+        .empty h3 { font-size: 1.2rem; color: #ccc; margin-bottom: 8px; }
+
+        /* ── AUTH PAGE ── */
+        .auth-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(ellipse 70% 60% at 50% 50%, rgba(229,9,20,.07) 0%, transparent 70%),
+                var(--bg);
+            padding: 40px 20px;
+        }
+        .auth-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: var(--red);
+            letter-spacing: 4px;
+            margin-bottom: 48px;
+        }
+        .auth-card {
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 10px;
+            padding: 48px 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .auth-card h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .auth-card p { color: var(--muted); font-size: .9rem; margin-bottom: 32px; }
+        .auth-card .btn { width: 100%; justify-content: center; padding: 14px; font-size: 1rem; margin-bottom: 12px; }
+
+        /* ── UPLOAD FLOATING BTN ── */
+        .fab {
+            position: fixed;
+            bottom: 36px; right: 36px;
+            background: var(--red);
+            color: #fff;
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(229,9,20,.5);
+            transition: transform .2s, box-shadow .2s;
+            z-index: 200;
+        }
+        .fab:hover { transform: scale(1.12); box-shadow: 0 6px 28px rgba(229,9,20,.7); }
+
+        /* ── DASHBOARD LINK ── */
+        .dashboard-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: .82rem;
+            text-decoration: none;
+            transition: color .2s;
+        }
+        .dashboard-link:hover { color: #fff; }
+
+        /* scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+        /* responsive */
+        @media (max-width: 768px) {
+            nav { padding: 16px 20px; }
+            .hero { padding: 0 20px 60px; height: 70vh; }
+            .sections { padding: 0 20px 60px; }
+            :root { --card-w: 160px; }
+            .hero-title { font-size: 2.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+
+
+<nav id="navbar">
+    <a class="nav-logo" href="/">SECUREFLIX</a>
+    <div class="nav-right">
+        {% if user.is_superuser %}
+        <a href="/dashboard/" class="dashboard-link">
+            ⚙ Dashboard
+        </a>
+        {% endif %}
+        <span class="nav-user">Hello, <span>{{ user.username }}</span></span>
+        <form action="/accounts/logout/" method="POST" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-logout">Sign Out</button>
+        </form>
+    </div>
+</nav>
+
+
+{% with movies|first as featured %}
+<section class="hero">
+    <div class="hero-bg-pattern"></div>
+    {% if featured and featured.thumbnail %}
+    <div class="hero-movie-bg" style="background-image: url('{{ featured.thumbnail.url }}');"></div>
+    {% endif %}
+    <div class="hero-fade"></div>
+    <div class="hero-content">
+        <div class="hero-badge">Now Streaming</div>
+        {% if featured %}
+        <h1 class="hero-title">{{ featured.title }}</h1>
+        <div class="hero-meta">
+            <span class="hero-rating">HD</span>
+            <span>{{ featured.category }}</span>
+            <span>{{ featured.created_at|date:"Y" }}</span>
+        </div>
+        <p class="hero-desc">{{ featured.description|truncatewords:30 }}</p>
+        <div class="hero-actions">
+            <a href="/movie/{{ featured.id }}/" class="btn btn-primary">▶ &nbsp;Play</a>
+            <a href="/movie/{{ featured.id }}/" class="btn btn-secondary">ℹ &nbsp;More Info</a>
+        </div>
+        {% else %}
+        <h1 class="hero-title">Welcome to<br>SecureFlix</h1>
+        <p class="hero-desc">Your private streaming platform. Upload movies and start watching instantly.</p>
+        {% endif %}
+    </div>
+</section>
+{% endwith %}
+
+
+<div class="sections">
+
+    {% if movies %}
+    <div class="section">
+        <div class="section-title">
+            All Movies
+            <span class="count">{{ movies|length }} titles</span>
+        </div>
+        <div class="card-row">
+            {% for movie in movies %}
+            <div class="card">
+               
+                {% if movie.thumbnail %}
+                <img class="card-thumb"
+                     src="{{ movie.thumbnail.url }}"
+                     alt="{{ movie.title }}" loading="lazy">
+                {% else %}
+                <div class="card-thumb" style="background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:2rem;">🎬</div>
+                {% endif %}
+
+             
+                {% if movie.video %}
+                <video muted loop preload="none"
+                       onmouseover="this.play()"
+                       onmouseout="this.pause(); this.currentTime=0;">
+                    <source src="{{ movie.video.url }}" type="video/mp4">
+                </video>
+                {% endif %}
+
+                <span class="card-badge">{{ movie.category }}</span>
+
+                {% if user.is_superuser %}
+                <div class="card-admin">
+                    <a href="/edit/{{ movie.id }}/" class="admin-btn edit">✏ Edit</a>
+                    <a href="/delete/{{ movie.id }}/" class="admin-btn del">✕</a>
+                </div>
+                {% endif %}
+
+              
+                <div class="card-overlay">
+                    <div class="card-title">{{ movie.title }}</div>
+                    <div class="card-actions">
+                        <a href="/movie/{{ movie.id }}/" class="icon-btn play" title="Play">▶</a>
+                        <a href="/movie/{{ movie.id }}/" class="icon-btn" title="More info">ℹ</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="empty">
+        <div class="empty-icon">🎬</div>
+        <h3>No movies yet</h3>
+        <p>{% if user.is_superuser %}Upload your first movie to get started.{% else %}Check back soon for new content!{% endif %}</p>
+    </div>
+    {% endif %}
+
+</div>
+
+
+{% if user.is_superuser %}
+<a href="/upload/" class="fab" title="Upload Movie">＋</a>
+{% endif %}
+
+{% else %}
+
+
+<div class="auth-screen">
+    <div class="auth-logo">SECUREFLIX</div>
+    <div class="auth-card">
+        <h2>Welcome Back</h2>
+        <p>Sign in to continue watching your favourite movies</p>
+        <a href="/accounts/login/" class="btn btn-red">Sign In</a>
+        <a href="/accounts/register/" class="btn btn-outline">Create Account</a>
+    </div>
+</div>
+
+{% endif %}
+
+<script>
+  
+    const nav = document.getElementById('navbar');
+    if (nav) {
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 60);
+        });
+    }
+</script>
+
+</body>
+</html>

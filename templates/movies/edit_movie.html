@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Movie</title>
+    <style>
+        body {
+            background-color: #141414;
+            color: #fff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 0;
+        }
+
+        .edit-container {
+            background-color: #181818;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+            width: 500px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            color: #e50914;
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+            color: #ccc;
+        }
+
+        input[type="text"], textarea, input[type="file"] {
+            width: 100%;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #e50914;
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #f40612;
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-container">
+        <h1>Edit Movie</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <label>Movie Title</label>
+            <input type="text" name="title" value="{{ movie.title }}">
+
+            <label>Description</label>
+            <textarea name="description">{{ movie.description }}</textarea>
+
+            <label>Thumbnail Image</label>
+            <input type="file" name="thumbnail">
+
+            <label>Movie / Series Video</label>
+            <input type="file" name="video">
+
+            <button type="submit">Update Movie</button>
+        </form>
+    </div>
+</body>
+</html>
