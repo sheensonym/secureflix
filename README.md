@@ -1,52 +1,95 @@
-# SecureFlix
+# 🎬 SecureFlix
 
-SecureFlix is a Django-based movie streaming platform deployed using Docker on AWS EC2.
+A Netflix-inspired OTT streaming platform built with Django and deployed 
+on AWS following DevSecOps best practices.
 
-## Features
+## 🌐 Live Demo
+https://d1fnls6126mesp.cloudfront.net
 
-- User Authentication
-- Admin Dashboard
-- Movie Streaming Platform
-- Dockerized Deployment
-- NGINX Reverse Proxy
-- Rate Limiting for Security
-- AWS EC2 Deployment
-- Private Subnet Architecture
+## 🛠️ Tech Stack
 
-## Technologies Used
+| Layer | Technology |
+|-------|-----------|
+| Backend | Django (Python) |
+| Web Server | Nginx + Gunicorn |
+| Database | AWS RDS MySQL |
+| Storage | AWS S3 |
+| CDN | AWS CloudFront |
+| Load Balancer | AWS ALB |
+| Containerization | Docker + Docker Compose |
+| CI/CD | GitHub Actions |
+| Monitoring | AWS CloudWatch |
 
-- Django
-- Docker
-- NGINX
-- AWS EC2
-- SQLite / MySQL
-- Gunicorn
+## 🏗️ Architecture
+Internet → CloudFront CDN → ALB → EC2 (Nginx → Gunicorn → Django) → RDS MySQL
+↓
+S3 (static/media)
 
-## Docker Setup
+## 🔒 Security Features
 
-### Build Docker Image
+- EC2 in private subnet (no direct internet access)
+- firewalld: HTTP only from ALB subnets (10.0.1.0/24, 10.0.5.0/24)
+- Nginx rate limiting (5 req/min on login, 100 req/min general)
+- Security headers (HSTS, CSP, X-Frame-Options, nosniff)
+- SSH hardening + fail2ban
+- Automated backups with cron
+- Log rotation
+- CloudWatch alarms (CPU, memory, disk)
 
+## ⚙️ Local Setup
+
+### Prerequisites
+- Python 3.11+
+- MySQL
+- Docker & Docker Compose
+
+### 1. Clone the repo
 ```bash
-docker build -t secureflix .
+git clone https://github.com/sheensonym/secureflix.git
+cd secureflix
 ```
 
-### Run Docker Container
-
+### 2. Create virtual environment
 ```bash
-docker run -p 9000:8000 secureflix
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-## Security Features
+### 3. Configure environment variables
+```bash
+cp .env.example .env
+# Edit .env with your values
+```
 
-- NGINX Rate Limiting
-- Bastion Host Access
-- Private Subnet Deployment
-- Reverse Proxy Configuration
+### 4. Run migrations and start
+```bash
+python manage.py migrate
+python manage.py collectstatic
+python manage.py runserver
+```
 
-## Architecture
+### 5. Run with Docker
+```bash
+docker-compose up --build
+```
 
-User → Bastion Host → Private EC2 → Docker → Django
+## 🚀 Deployment (AWS)
 
-## Author
+Push to main branch — GitHub Actions will automatically:
+1. Run tests
+2. SSH into EC2
+3. Pull latest code
+4. Restart Gunicorn
 
-Sheen Sony m
+## 📁 Project Structure
+secureflix/
+├── secureflix/          # Django project (settings, urls, wsgi)
+├── templates/           # HTML templates
+├── static/              # Static files
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+└── .github/workflows/   # CI/CD pipeline
+
+:wq
