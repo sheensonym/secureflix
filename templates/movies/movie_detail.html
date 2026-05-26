@@ -2,61 +2,201 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ movie.title }}</title>
     <style>
-        body {
-            background-color: #141414;
+        /* Core Dark Theater Ambient Mood */
+        body, html {
+            background-color: #0a0a0a;
+            /* Radial gradient creating an ambient red glow behind the content */
+            background-image: radial-gradient(circle at top center, #1f0506 0%, #0a0a0a 70%);
             color: #fff;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
         }
 
-        .movie-container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #181818;
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 50px;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #e50914;
-            text-align: center;
+        /* Video Player Wrapper with Netflix Red Border & Hover Glow */
+        .video-player-container {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            margin: 50px auto 0 auto;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #e50914; 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+            aspect-ratio: 16 / 9;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+        }
+
+        /* Elegant hover response */
+        .video-player-container:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 35px rgba(229, 9, 20, 0.4); 
         }
 
         video {
             width: 100%;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            outline: none;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
         }
 
-        p {
+        /* Custom Play Overlay (Netflix Red Theme) */
+        .video-overlay-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            background: rgba(0, 0, 0, 0.75);
+            border: 3px solid #e50914; 
+            border-radius: 50%;
+            width: 85px;
+            height: 85px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+            pointer-events: none;
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.5);
+        }
+
+        /* Play triangle icon */
+        .video-overlay-btn::after {
+            content: '';
+            box-sizing: border-box;
+            width: 0;
+            height: 26px;
+            border-style: solid;
+            border-width: 13px 0 13px 24px;
+            border-color: transparent transparent transparent #fff; 
+            margin-left: 6px;
+        }
+
+        /* When video plays, overlay button scales up and vanishes cleanly */
+        .video-player-container.is-playing .video-overlay-btn {
+            opacity: 0;
+            visibility: hidden;
+            transform: translate(-50%, -50%) scale(1.4);
+        }
+
+        /* Content Info Section */
+        .movie-details {
+            max-width: 1100px;
+            width: 90%;
+            margin: 40px auto 0 auto;
+            box-sizing: border-box;
+        }
+
+        .movie-title {
+            font-size: 3.2rem;
+            font-weight: 900;
+            margin: 0 0 15px 0;
+            color: #fff;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Meta Row Styling */
+        .movie-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
             font-size: 1.1rem;
-            line-height: 1.6;
-            color: #ccc;
-            text-align: justify;
+            font-weight: 700;
         }
 
-        /* Netflix-style hover effect for video */
-        video:hover {
-            box-shadow: 0 0 20px rgba(229,9,20,0.7);
-            transition: box-shadow 0.3s ease;
+        .meta-item {
+            color: #b3b3b3;
+        }
+
+        /* High-contrast HD badge */
+        .quality-badge {
+            border: 1px solid #e50914;
+            color: #e50914;
+            padding: 1px 6px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            border-radius: 3px;
+            letter-spacing: 1px;
+        }
+
+        .movie-description {
+            font-size: 1.25rem;
+            line-height: 1.7;
+            color: #e5e5e5;
+            max-width: 850px;
+            margin: 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+        }
+
+        /* Mobile scaling fallback */
+        @media (max-width: 768px) {
+            .movie-title { font-size: 2.2rem; }
+            .movie-description { font-size: 1.1rem; }
+            .video-player-container { margin-top: 0; border-radius: 0; border-left: none; border-right: none; }
         }
     </style>
 </head>
 <body>
-    <div class="movie-container">
-        <h1>{{ movie.title }}</h1>
-        <video controls>
-            <source src="{{ movie.video.url }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <p>{{ movie.description }}</p>
+
+    <div class="main-wrapper">
+        <!-- Player Space -->
+        <div class="video-player-container" id="playerContainer">
+            <video id="netflixVideo" controls controlsList="nodownload">
+                <source src="{{ movie.video.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="video-overlay-btn"></div>
+        </div>
+
+        <!-- Typography Info Space -->
+        <div class="movie-details">
+            <h1 class="movie-title">{{ movie.title }}</h1>
+            
+            <div class="movie-meta">
+                <span class="meta-item">2026</span>
+                <span class="quality-badge">4K ULTRA HD</span>
+            </div>
+
+            <p class="movie-description">
+                {{ movie.description }}
+            </p>
+        </div>
     </div>
+
+    <script>
+        const video = document.getElementById('netflixVideo');
+        const container = document.getElementById('playerContainer');
+
+        video.addEventListener('play', () => {
+            container.classList.add('is-playing');
+        });
+
+        video.addEventListener('pause', () => {
+            container.classList.remove('is-playing');
+        });
+
+        video.addEventListener('click', () => {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        });
+    </script>
 </body>
 </html>

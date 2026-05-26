@@ -2,168 +2,572 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>OTT Admin Dashboard 🚀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureFlix — Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #141414;
-            color: #fff;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 30px;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --red: #E50914;
+            --red-dark: #B20710;
+            --bg: #141414;
+            --surface: #1a1a1a;
+            --surface2: #222222;
+            --border: rgba(255,255,255,0.08);
+            --text: #ffffff;
+            --text-muted: #8c8c8c;
+            --yellow: #f5c518;
+            --green: #46d369;
         }
 
-        h1 {
-            color: #e50914;
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+        html, body {
+            min-height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
         }
 
-        hr {
-            border: 1px solid #333;
-            margin: 30px 0;
-        }
-
-        h2 {
-            color: #e50914;
-            margin-bottom: 15px;
-            border-left: 4px solid #e50914;
-            padding-left: 10px;
-        }
-
-        p {
-            color: #ccc;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        .stats {
+        /* ── NAVBAR ── */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(20,20,20,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 48px;
+            height: 64px;
             display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin-bottom: 40px;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .stat-box {
-            background-color: #181818;
-            padding: 20px;
-            border-radius: 10px;
-            width: 250px;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(0,0,0,0.6);
-            margin: 10px;
-        }
-
-        .stat-box h3 {
-            color: #ccc;
-            margin-bottom: 10px;
-        }
-
-        .stat-box p {
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
             font-size: 1.8rem;
-            color: #e50914;
-            margin: 0;
+            letter-spacing: 3px;
+            color: var(--red);
+            text-shadow: 0 0 30px rgba(229,9,20,0.4);
         }
 
-        .user-card, .movie-card {
-            background-color: #181818;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.6);
-        }
+        .logo span { color: #fff; opacity: 0.9; }
 
-        .user-card a, .movie-card a {
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .user-card a:hover, .movie-card a:hover {
-            opacity: 0.8;
-        }
-
-        .delete-link {
-            color: #e50914;
-        }
-
-        .edit-link {
-            color: #f5c518;
-        }
-
-        img {
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .history-entry {
-            background-color: #181818;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            color: #ccc;
-        }
-
-        .history-entry b {
+        .nav-badge {
+            background: var(--red);
             color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        /* ── LAYOUT ── */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 40px 48px;
+        }
+
+        /* ── PAGE HEADER ── */
+        .page-header {
+            margin-bottom: 40px;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .page-header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* ── SECTION TITLE ── */
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 22px;
+            background: var(--red);
+            border-radius: 2px;
+        }
+
+        .section { margin-bottom: 52px; animation: fadeUp 0.5s ease both; }
+        .section:nth-child(2) { animation-delay: 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.2s; }
+        .section:nth-child(4) { animation-delay: 0.3s; }
+        .section:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── STATS GRID ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 28px 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(229,9,20,0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--red);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .stat-card .label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .stat-card .value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .icon {
+            position: absolute;
+            top: 24px; right: 24px;
+            font-size: 1.6rem;
+            opacity: 0.15;
+        }
+
+        /* ── DIVIDER ── */
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 0 0 52px;
+        }
+
+        /* ── TABLE ── */
+        .table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead tr {
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        thead th {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+        tbody td {
+            padding: 16px 20px;
+            font-size: 0.92rem;
+            color: #ddd;
+            vertical-align: middle;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-user { background: rgba(70,211,105,0.15); color: var(--green); }
+        .badge-admin { background: rgba(229,9,20,0.15); color: var(--red); }
+
+        /* ── ACTION LINKS ── */
+        .actions { display: flex; gap: 16px; align-items: center; }
+
+        .btn-edit {
+            color: var(--yellow);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border: 1px solid rgba(245,197,24,0.3);
+            border-radius: 4px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .btn-edit:hover {
+            background: rgba(245,197,24,0.1);
+            border-color: var(--yellow);
+        }
+
+        .btn-delete {
+            color: var(--red);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border: 1px solid rgba(229,9,20,0.3);
+            border-radius: 4px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: rgba(229,9,20,0.1);
+            border-color: var(--red);
+        }
+
+        /* ── MOVIE CARDS ── */
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .movie-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            border-color: rgba(229,9,20,0.4);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+        }
+
+        .movie-thumb {
+            width: 100%;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            display: block;
+        }
+
+        .movie-thumb-placeholder {
+            width: 100%;
+            aspect-ratio: 2/3;
+            background: var(--surface2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: rgba(255,255,255,0.1);
+        }
+
+        .movie-info {
+            padding: 14px 16px;
+        }
+
+        .movie-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .movie-actions a {
+            flex: 1;
+            text-align: center;
+            padding: 7px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .movie-actions a:hover { opacity: 0.8; }
+
+        .btn-edit-sm {
+            background: rgba(245,197,24,0.15);
+            color: var(--yellow);
+            border: 1px solid rgba(245,197,24,0.3);
+        }
+
+        .btn-delete-sm {
+            background: rgba(229,9,20,0.15);
+            color: var(--red);
+            border: 1px solid rgba(229,9,20,0.3);
+        }
+
+        /* ── ACTIVITY FEED ── */
+        .activity-list {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .activity-item {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: background 0.15s;
+        }
+
+        .activity-item:last-child { border-bottom: none; }
+        .activity-item:hover { background: rgba(255,255,255,0.02); }
+
+        .activity-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--red-dark), var(--red));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .activity-text {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        .activity-text b { color: #fff; font-weight: 600; }
+        .activity-text .movie-name { color: var(--red); font-weight: 600; }
+
+        .activity-time {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 20px; }
+            .container { padding: 24px 20px; }
+            .movies-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
         }
     </style>
 </head>
 <body>
-    <h1>Admin Dashboard</h1>
 
-    <hr>
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="logo">Secure<span>Flix</span></div>
+    <span class="nav-badge">Admin Panel</span>
+</nav>
 
-    <h2>Basic Stats</h2>
-    <div class="stats">
-        <div class="stat-box">
-            <h3>Total Users</h3>
-            <p>{{ total_users }}</p>
-        </div>
-        <div class="stat-box">
-            <h3>Total Movies</h3>
-            <p>{{ total_movies }}</p>
-        </div>
-        <div class="stat-box">
-            <h3>Total Views</h3>
-            <p>{{ total_views }}</p>
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Admin Dashboard</h1>
+        <p>Manage users, content, and monitor platform activity.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="section">
+        <div class="section-title">Overview</div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Total Users</div>
+                <div class="value">{{ total_users }}</div>
+                <div class="icon">👤</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Total Movies</div>
+                <div class="value">{{ total_movies }}</div>
+                <div class="icon">🎬</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Total Views</div>
+                <div class="value">{{ total_views }}</div>
+                <div class="icon">👁</div>
+            </div>
         </div>
     </div>
 
-    <hr>
+    <hr class="divider">
 
-    <h2>Manage Users</h2>
-    {% for user in users %}
-    <div class="user-card">
-        <p><b>Username:</b> {{ user.username }}<br>
-        <b>Joined:</b> {{ user.date_joined }}</p>
+    <!-- Manage Users -->
+    <div class="section">
+        <div class="section-title">Manage Users</div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Date Joined</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td><b>{{ user.username }}</b></td>
+                        <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                        <td>
+                            {% if user.is_superuser %}
+                                <span class="badge badge-admin">Admin</span>
+                            {% else %}
+                                <span class="badge badge-user">User</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not user.is_superuser %}
+                            <div class="actions">
+                                <a href="/delete-user/{{ user.id }}/" class="btn-delete">Delete</a>
+                            </div>
+                            {% else %}
+                            <span style="color: var(--text-muted); font-size:0.8rem;">Protected</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">
+                            <div class="empty-state">
+                                <div class="icon">👤</div>
+                                No users found.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-        {% if not user.is_superuser %}
-        <a href="/delete-user/{{ user.id }}/" class="delete-link">Delete User</a>
+    <hr class="divider">
+
+    <!-- Manage Content -->
+    <div class="section">
+        <div class="section-title">Manage Content</div>
+        {% if movies %}
+        <div class="movies-grid">
+            {% for movie in movies %}
+            <div class="movie-card">
+                {% if movie.thumbnail %}
+                    <img src="{{ movie.thumbnail.url }}" class="movie-thumb" alt="{{ movie.title }}">
+                {% else %}
+                    <div class="movie-thumb-placeholder">🎬</div>
+                {% endif %}
+                <div class="movie-info">
+                    <div class="movie-title">{{ movie.title }}</div>
+                    <div class="movie-actions">
+                        <a href="/edit/{{ movie.id }}/" class="btn-edit-sm">Edit</a>
+                        <a href="/delete/{{ movie.id }}/" class="btn-delete-sm">Delete</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="icon">🎬</div>
+            No movies added yet.
+        </div>
         {% endif %}
     </div>
-    {% endfor %}
 
-    <hr>
+    <hr class="divider">
 
-    <h2>Manage Content</h2>
-    {% for movie in movies %}
-    <div class="movie-card">
-        <h3>{{ movie.title }}</h3>
-        <img src="{{ movie.thumbnail.url }}" width="200" alt="{{ movie.title }}">
-        <br><br>
-        <a href="/edit/{{ movie.id }}/" class="edit-link">Edit</a>
-        <br><br>
-        <a href="/delete/{{ movie.id }}/" class="delete-link">Delete</a>
+    <!-- Recent Watch Activity -->
+    <div class="section">
+        <div class="section-title">Recent Watch Activity</div>
+        <div class="activity-list">
+            {% for history in histories %}
+            <div class="activity-item">
+                <div class="activity-avatar">{{ history.user.username|slice:":1" }}</div>
+                <div class="activity-text">
+                    <b>{{ history.user.username }}</b> watched
+                    <span class="movie-name">{{ history.movie.title }}</span>
+                </div>
+                <div class="activity-time">{{ history.watched_at|date:"M d, H:i" }}</div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <div class="icon">📺</div>
+                No watch activity yet.
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
 
-    <hr>
+</div>
 
-    <h2>Recent Watch Activity</h2>
-    {% for history in histories %}
-    <div class="history-entry">
-        <b>{{ history.user.username }}</b> watched <b>{{ history.movie.title }}</b> at {{ history.watched_at }}
-    </div>
-    {% endfor %}
 </body>
 </html>
