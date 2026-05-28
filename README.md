@@ -92,4 +92,3 @@ secureflix/
 ├── requirements.txt
 └── .github/workflows/   # CI/CD pipeline
 
-:wq
